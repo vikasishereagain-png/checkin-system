@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Check-In System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      margin-top: 100px;
+      background-color: #f5f5f5;
+    }
+
+    h2 {
+      color: #333;
+    }
+
+    input {
+      padding: 12px;
+      width: 250px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 12px 25px;
+      font-size: 16px;
+      margin-top: 15px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #message {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <h2>Scan & Check-In</h2>
+
+  <input type="text" id="name" placeholder="Enter your name" />
+  <br>
+
+<button onclick="checkIn()">Check In</button>
+
+  <p id="message"></p>
+
+  <script>
+    function checkIn() {
+      let name = document.getElementById("name").value.trim();
+
+      if(name === "") {
+        document.getElementById("message").innerText = "⚠️ Please enter your name";
+        return;
+      }
+
+      document.getElementById("message").innerText = "⏳ Checking in for " + name + "...";
+
+      // Backend connection will come in next step
+    }
+  </script>
+
+</body>
+</html>
