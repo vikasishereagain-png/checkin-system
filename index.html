@@ -62,17 +62,29 @@
 
   <script>
     function checkIn() {
-      let name = document.getElementById("name").value.trim();
+let name = document.getElementById("name").value.trim();
 
-      if(name === "") {
-        document.getElementById("message").innerText = "⚠️ Please enter your name";
-        return;
-      }
+if(name === "") {
+document.getElementById("message").innerText = "⚠️ Please enter your name";
+return;
+}
 
-      document.getElementById("message").innerText = "⏳ Checking in for " + name + "...";
+document.getElementById("message").innerText = "⏳ Checking in...";
 
-      // Backend connection will come in next step
-    }
+fetch("https://script.google.com/macros/s/AKfycbzP6EFnufdZHTVQSbTZ0zZa3W2zoIE_jc0wW05LsaSSP8IVoMEA_fYrk9lVgNmJm0LFpA/exec", {
+method: "POST",
+body: JSON.stringify({ name: name }),
+})
+.then(response => response.json())
+.then(data => {
+document.getElementById("message").innerText = "✅ Checked in successfully!";
+document.getElementById("name").value = "";
+})
+.catch(error => {
+document.getElementById("message").innerText = "❌ Error occurred";
+});
+}
+
   </script>
 
 </body>
