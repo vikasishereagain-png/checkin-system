@@ -83,7 +83,7 @@ function capturePhoto() {
   document.getElementById("message").innerText = "📸 Photo captured!";
 }
 
-// Check-in function
+// Check-in
 function checkIn() {
   let name = document.getElementById("name").value.trim();
 
@@ -101,14 +101,14 @@ function checkIn() {
 
   fetch("https://script.google.com/macros/s/AKfycbzP6EFnufdZHTVQSbTZ0zZa3W2zoIE_jc0wW05LsaSSP8IVoMEA_fYrk9lVgNmJm0LFpA/exec", {
     method: "POST",
-    mode: "no-cors",   // FIX
+    mode: "no-cors",
     body: JSON.stringify({
       name: name,
       photo: photoData
     })
   })
   .then(() => {
-    document.getElementById("message").innerText = "✅ Checked in!";
+    document.getElementById("message").innerText = "✅ Checked in successfully!";
     document.getElementById("name").value = "";
     photoData = "";
   })
