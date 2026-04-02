@@ -83,7 +83,7 @@ function capturePhoto() {
   document.getElementById("message").innerText = "📸 Photo captured!";
 }
 
-// Send data
+// Check-in function
 function checkIn() {
   let name = document.getElementById("name").value.trim();
 
@@ -101,13 +101,18 @@ function checkIn() {
 
   fetch("https://script.google.com/macros/s/AKfycbzP6EFnufdZHTVQSbTZ0zZa3W2zoIE_jc0wW05LsaSSP8IVoMEA_fYrk9lVgNmJm0LFpA/exec", {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify({
       name: name,
       photo: photoData
-    }),
+    })
   })
-  .then(res => res.json())
-  .then(data => {
+  .then(response => response.text())
+  .then(text => {
+    let data = JSON.parse(text);
+
     if(data.status === "existing") {
       document.getElementById("message").innerText = "✅ Welcome back!";
     } 
@@ -122,7 +127,7 @@ function checkIn() {
     photoData = "";
   })
   .catch(err => {
-    document.getElementById("message").innerText = "❌ Failed to connect";
+    document.getElementById("message").innerText = "❌ " + err;
   });
 }
 </script>
