@@ -77,9 +77,15 @@ body: JSON.stringify({ name: name }),
 })
 .then(response => response.json())
 .then(data => {
-document.getElementById("message").innerText = "✅ Checked in successfully!";
+if(data.status === "existing") {
+document.getElementById("message").innerText = "✅ Welcome back!";
+} else {
+document.getElementById("message").innerText = "🆕 New user added!";
+}
+
 document.getElementById("name").value = "";
 })
+
 .catch(error => {
 document.getElementById("message").innerText = "❌ Error occurred";
 });
