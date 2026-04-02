@@ -9,12 +9,8 @@
     body {
       font-family: Arial;
       text-align: center;
-      margin-top: 100px;
+      margin-top: 50px;
       background-color: #f5f5f5;
-    }
-
-    h2 {
-      color: #333;
     }
 
     input {
@@ -26,9 +22,9 @@
     }
 
     button {
-      padding: 12px 25px;
+      padding: 12px 20px;
       font-size: 16px;
-      margin-top: 15px;
+      margin-top: 10px;
       cursor: pointer;
       background-color: #007bff;
       color: white;
@@ -36,62 +32,100 @@
       border-radius: 5px;
     }
 
-    button:hover {
-      background-color: #0056b3;
-    }
-
     #message {
-      margin-top: 20px;
+      margin-top: 15px;
       font-weight: bold;
     }
-
   </style>
 
 </head>
 
 <body>
 
-  <h2>Scan & Check-In</h2>
+<h2>Scan & Check-In</h2>
 
-  <input type="text" id="name" placeholder="Enter your name" />
-  <br>
+<input type="text" id="name" placeholder="Enter your name" />
+<br><br>
 
-<button onclick="checkIn()">Check In</button>
+<video id="video" width="250" height="200" autoplay></video> <br> <button onclick="capturePhoto()">📷 Capture Photo</button>
 
-  <p id="message"></p>
+<br><br> <button onclick="checkIn()">Check In</button>
 
-  <script>
-    function checkIn() {
-let name = document.getElementById("name").value.trim();
+<p id="message"></p>
 
-if(name === "") {
-document.getElementById("message").innerText = "⚠️ Please enter your name";
-return;
-}
+<canvas id="canvas" style="display:none;"></canvas>
 
-document.getElementById("message").innerText = "⏳ Checking in...";
+<script>
+let photoData = "";
 
-fetch("https://script.google.com/macros/s/AKfycbzP6EFnufdZHTVQSbTZ0zZa3W2zoIE_jc0wW05LsaSSP8IVoMEA_fYrk9lVgNmJm0LFpA/exec", {
-method: "POST",
-body: JSON.stringify({ name: name }),
+// Open front camera
+navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+.then(stream => {
+  document.getElementById("video").srcObject = stream;
 })
-.then(response => response.json())
-.then(data => {
-if(data.status === "existing") {
-document.getElementById("message").innerText = "✅ Welcome back!";
-} else {
-document.getElementById("message").innerText = "🆕 New user added!";
-}
-
-document.getElementById("name").value = "";
-})
-
-.catch(error => {
-document.getElementById("message").innerText = "❌ Error occurred";
+.catch(err => {
+  document.getElementById("message").innerText = "Camera permission denied";
 });
+
+// Capture photo
+function capturePhoto() {
+  const video = document.getElementById("video");
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  ctx.drawImage(video, 0, 0);
+
+  photoData = canvas.toDataURL("image/png");
+
+  document.getElementById("message").innerText = "📸 Photo captured!";
 }
 
-  </script>
+// Send data
+function checkIn() {
+  let name = document.getElementById("name").value.trim();
+
+  if(name === "") {
+    document.getElementById("message").innerText = "Enter your name";
+    return;
+  }
+
+  if(photoData === "") {
+    document.getElementById("message").innerText = "Capture photo first";
+    return;
+  }
+
+  document.getElementById("message").innerText = "Checking in...";
+
+  fetch("https://script.google.com/macros/s/AKfycbzP6EFnufdZHTVQSbTZ0zZa3W2zoIE_jc0wW05LsaSSP8IVoMEA_fYrk9lVgNmJm0LFpA/exec", {
+    method: "POST",
+    body: JSON.stringify({
+      name: name,
+      photo: photoData
+    }),
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.status === "existing") {
+      document.getElementById("message").innerText = "✅ Welcome back!";
+    } 
+    else if(data.status === "new") {
+      document.getElementById("message").innerText = "🆕 New user added!";
+    } 
+    else {
+      document.getElementById("message").innerText = "❌ ERROR: " + data.message;
+    }
+
+    document.getElementById("name").value = "";
+    photoData = "";
+  })
+  .catch(err => {
+    document.getElementById("message").innerText = "❌ Failed to connect";
+  });
+}
+</script>
 
 </body>
 </html>
